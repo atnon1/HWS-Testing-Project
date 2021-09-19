@@ -22,13 +22,11 @@ class HWS_Testing_ProjectUITests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func testInitialStateIsCorrect() {
         let app = XCUIApplication()
         app.launch()
-
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let table = app.tables
+        XCTAssertEqual(table.cells.count, 7, "There should be 7 rows initially")
     }
 
     func testLaunchPerformance() throws {
@@ -39,4 +37,19 @@ class HWS_Testing_ProjectUITests: XCTestCase {
             }
         }
     }
+    
+    func testUserFilteringByString() {
+        let app = XCUIApplication()
+        app.launch()
+        app.buttons["Search"].tap()
+        
+        let filterAlert = app.alerts
+        let textField = filterAlert.textFields.element
+        textField.typeText("test")
+        
+        filterAlert.buttons["Filter"].tap()
+        
+        XCTAssertEqual(app.tables.cells.count, 56)
+    }
+    
 }

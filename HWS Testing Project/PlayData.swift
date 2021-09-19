@@ -11,6 +11,7 @@ class PlayData {
     
     var allWords = [String]()
     var wordCounts = NSCountedSet()
+    private(set) var filteredWords = [String]()
     
     init() {
         if let path = Bundle.main.path(forResource: "plays", ofType: "txt") {
@@ -22,6 +23,19 @@ class PlayData {
         wordCounts = NSCountedSet(array: allWords)
         let sorted = wordCounts.allObjects.sorted { wordCounts.count(for: $0) > wordCounts.count(for: $1) }
         allWords = sorted as! [String]
+        //filteredWords = allWords
+        applyUserFilter("swift")
     }
     
+    func applyUserFilter(_ input: String) {
+        if let userNumber = Int(input) {
+            applyFilter { wordCounts.count(for: $0) >= userNumber}
+        } else {
+            applyFilter { $0.range(of: input, options: [.caseInsensitive]) != nil }
+        }
+    }
+    
+    private func applyFilter(_ filter: (String) -> Bool) {
+        filteredWords = allWords.filter(filter)
+    }
 }
